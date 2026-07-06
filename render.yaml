@@ -1,0 +1,57 @@
+services:
+  - type: web
+    name: central-krabi-api
+    runtime: node
+    rootDir: backend
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeployTrigger: commit
+    envVars:
+      - key: NODE_VERSION
+        value: 22.16.0
+      - key: NODE_ENV
+        value: production
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: CORS_ORIGIN
+        sync: false
+      - key: ORGANIZATION_NAME
+        value: Central Krabi
+      - key: REPORT_STORAGE_BUCKET
+        value: report-files
+      - key: RATE_LIMIT_WINDOW_MINUTES
+        value: 15
+      - key: RATE_LIMIT_MAX_REQUESTS
+        value: 300
+      - key: SENSITIVE_RATE_LIMIT_WINDOW_MINUTES
+        value: 15
+      - key: SENSITIVE_RATE_LIMIT_MAX_REQUESTS
+        value: 60
+
+  - type: web
+    name: central-krabi-dashboard
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./dist
+    autoDeployTrigger: commit
+    envVars:
+      - key: NODE_VERSION
+        value: 22.16.0
+      - key: VITE_SUPABASE_URL
+        sync: false
+      - key: VITE_SUPABASE_ANON_KEY
+        sync: false
+      - key: VITE_API_BASE_URL
+        sync: false
+      - key: VITE_ORGANIZATION_NAME
+        value: Central Krabi
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
